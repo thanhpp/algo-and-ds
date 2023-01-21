@@ -1,13 +1,21 @@
 // 5 ms - 2.7 MB
 pub fn is_palindrome(s: String) -> bool {
-    let s = s.to_lowercase(); // lowercases
-    let mut s1: Vec<char> = Vec::new();
-    for c in s.chars() {
-        if c.is_alphanumeric() {
-            // take only alphanumeric
-            s1.push(c);
-        }
-    }
+    // -----------------------------------
+    // 5 ms - 2.7 MB
+    // let s = s.to_lowercase(); // lowercases
+    // let mut s1: Vec<char> = Vec::new();
+    // for c in s.chars() {
+    //     if c.is_alphanumeric() {
+    //         // take only alphanumeric
+    //         s1.push(c);
+    //     }
+    // }
+    // -----------------------------------
+    let s1: Vec<char> = s
+        .chars()
+        .filter(|c| c.is_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect();
 
     if s1.len() == 0 {
         return true;
