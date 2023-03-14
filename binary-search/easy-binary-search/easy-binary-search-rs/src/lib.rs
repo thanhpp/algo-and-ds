@@ -28,9 +28,9 @@ mod tests {
 
     #[test]
     fn test_bin_search() {
-        // assert_eq!(search(&vec![-1, 0, 3, 5, 9, 12], 9), 4);
-        // assert_eq!(search(&vec![-1, 0, 3, 5, 9, 12], 2), -1);
-        // assert_eq!(search(&vec![2, 5], 5), 1);
+        assert_eq!(search(&vec![-1, 0, 3, 5, 9, 12], 9), 4);
+        assert_eq!(search(&vec![-1, 0, 3, 5, 9, 12], 2), -1);
+        assert_eq!(search(&vec![2, 5], 5), 1);
         println!("test 6");
         assert_eq!(search(&vec![2, 5], 2), 0);
     }

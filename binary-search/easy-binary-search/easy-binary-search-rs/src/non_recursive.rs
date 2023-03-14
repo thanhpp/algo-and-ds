@@ -41,16 +41,16 @@ mod tests {
 
     #[test]
     fn test_bin_search() {
-        // println!("test 1");
-        // assert_eq!(search2(&vec![-1, 0, 3, 5, 9, 12], 9), 4);
-        // println!("test 2");
-        // assert_eq!(search2(&vec![-1, 0, 3, 5, 9, 12], 2), -1);
-        // println!("test 3");
-        // assert_eq!(search2(&vec![5], -5), -1);
-        // println!("test 4");
-        // assert_eq!(search2(&vec![5], 5), 0);
-        // println!("test 5");
-        // assert_eq!(search2(&vec![2, 5], 5), 1);
+        println!("test 1");
+        assert_eq!(search2(&vec![-1, 0, 3, 5, 9, 12], 9), 4);
+        println!("test 2");
+        assert_eq!(search2(&vec![-1, 0, 3, 5, 9, 12], 2), -1);
+        println!("test 3");
+        assert_eq!(search2(&vec![5], -5), -1);
+        println!("test 4");
+        assert_eq!(search2(&vec![5], 5), 0);
+        println!("test 5");
+        assert_eq!(search2(&vec![2, 5], 5), 1);
         println!("test 6");
         assert_eq!(search2(&vec![2, 5], 2), 0);
     }
