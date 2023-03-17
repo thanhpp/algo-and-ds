@@ -1,4 +1,5 @@
 mod non_recursive;
+mod non_recursive_2;
 
 // 2ms; 2.2MB
 pub fn search(nums: &Vec<i32>, target: i32) -> i32 {
