@@ -1,3 +1,5 @@
+mod sol2;
+
 struct Solution;
 
 impl Solution {
