@@ -59,4 +59,14 @@ mod tests {
             gen_link_list(v.iter().rev().map(|x| *x).collect::<Vec<i32>>())
         )
     }
+
+    #[test]
+    fn test_2() {
+        let v = (1..5000).into_iter().collect::<Vec<i32>>();
+
+        assert_eq!(
+            reverse_list(gen_link_list(v.clone())),
+            gen_link_list(v.iter().rev().map(|x| *x).collect::<Vec<i32>>())
+        )
+    }
 }
