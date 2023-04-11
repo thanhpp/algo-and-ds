@@ -1,5 +1,3 @@
-mod lib2;
-
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
     pub val: i32,
@@ -13,30 +11,36 @@ impl ListNode {
     }
 }
 
-// 384ms, 2.8MB
+// 2ms, 2.6 MB
 pub fn reverse_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    if head.is_none() {
-        return None;
+    let (mut prev, mut curr): (Option<Box<ListNode>>, Option<Box<ListNode>>) = (None, head);
+
+    // NONE -> head -> head.Next
+    // prev -> curr                 | iter 1
+    //         prev -> curr         | iter 2
+
+    while let Some(mut c) = curr {
+        // curr.next = prev (reserve the link)
+        // curr = curr.next (move the current)
+        curr = std::mem::replace(&mut c.next, prev);
+
+        /*
+        NOTE:
+        - c is a Box, and curr is an Option enum
+        - Some(mut c) = curr separates the c from the curr
+        - then curr can be update without modifying the c value
+        */
+
+        // prev = curr
+        prev = Some(c)
     }
 
-    let mut h = Box::new(ListNode::new(0));
-    let head = head.unwrap();
-    h.next = Some(Box::new(ListNode::new(head.val)));
-    let mut p = head.next;
-
-    while let Some(n) = p.clone() {
-        let mut new_list_node = Box::new(ListNode::new(n.val));
-        new_list_node.next = h.next;
-        h.next = Some(new_list_node);
-        p = n.next;
-    }
-
-    h.next
+    prev
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::ListNode;
+    use super::*;
 
     fn gen_link_list(v: Vec<i32>) -> Option<Box<ListNode>> {
         let mut head = Box::new(ListNode::new(0));
@@ -49,8 +53,6 @@ mod tests {
 
         head.next
     }
-
-    use super::*;
 
     #[test]
     fn test_1() {
