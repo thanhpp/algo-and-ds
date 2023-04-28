@@ -35,7 +35,10 @@ pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<Li
     // move forward 2 pointers
     while let Some(f) = fast.next {
         fast = f;
-        slow = slow.next.as_mut().unwrap();
+        slow = match slow.next.as_mut() {
+            None => return None,
+            Some(s) => s,
+        };
     }
 
     let remove = match slow.next.as_mut() {
