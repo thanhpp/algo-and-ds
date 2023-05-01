@@ -54,12 +54,12 @@ fn reverse_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     prev
 }
 
-fn merge_list(mut first: &mut Option<Box<ListNode>>, mut second: Option<Box<ListNode>>) {
+fn merge_list(first: &mut Option<Box<ListNode>>, second: Option<Box<ListNode>>) {
     let mut h1 = first;
     let mut h2 = second;
     while h1.is_some() && h2.is_some() {
-        let mut h1next = h1.as_mut().unwrap().next.take();
-        let mut h2next = h2.as_mut().unwrap().next.take();
+        let h1next = h1.as_mut().unwrap().next.take();
+        let h2next = h2.as_mut().unwrap().next.take();
         h1.as_mut().unwrap().next = h2;
         h1.as_mut().unwrap().next.as_mut().unwrap().next = h1next;
         h1 = &mut (h1.as_mut().unwrap().next.as_mut().unwrap().next);
