@@ -1,5 +1,6 @@
 package lru
 
+// 573ms, 73MB
 type node struct {
 	key    int
 	val    int
@@ -78,7 +79,7 @@ func (this *LRUCache) Get(key int) int {
 	this.head.child = v
 	// fmt.Println("new head", this.head.child)
 	// fmt.Println("curr tail", this.tail)
-	this.DEBUG()
+	// this.DEBUG()
 
 	return v.val
 }
@@ -132,7 +133,7 @@ func (this *LRUCache) Put(key int, value int) {
 	this.head.child = n
 	// fmt.Println("new head", this.head.child)
 
-	this.DEBUG()
+	// this.DEBUG()
 }
 
 /**
