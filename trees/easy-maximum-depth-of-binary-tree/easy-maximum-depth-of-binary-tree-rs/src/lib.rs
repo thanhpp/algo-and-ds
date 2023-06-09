@@ -1,3 +1,6 @@
+mod bfs;
+mod pre_order_dfs;
+
 // Definition for a binary tree node.
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
