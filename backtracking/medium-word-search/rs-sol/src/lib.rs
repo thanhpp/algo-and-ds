@@ -1,3 +1,5 @@
+mod lib2;
+
 pub struct Solution {}
 
 impl Solution {
