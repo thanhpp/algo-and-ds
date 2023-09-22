@@ -25,20 +25,16 @@ impl Solution {
                     grid[row][col] = 'x';
 
                     if row > 0 && grid[row - 1][col] == '1' {
-                        println!("{} {} {} {}", row, col, row - 1, col);
                         queue.push_back((row - 1, col))
                     }
                     if row < rows_length - 1 && grid[row + 1][col] == '1' {
-                        println!("{} {} {} {}", row, col, row + 1, col);
                         queue.push_back((row + 1, col))
                     }
 
                     if col > 0 && grid[row][col - 1] == '1' {
-                        println!("{} {} {} {}", row, col, row, col - 1);
                         queue.push_back((row, col - 1))
                     }
                     if col < cols_length - 1 && grid[row][col + 1] == '1' {
-                        println!("{} {} {} {}", row, col, row, col + 1);
                         queue.push_back((row, col + 1))
                     }
                 }
