@@ -4,9 +4,10 @@ impl Solution {
     pub fn unique_paths(m: i32, n: i32) -> i32 {
         let mut dp = vec![vec![0; n as usize]; m as usize];
 
-        for i in 0..m as usize {
-            dp[i][0] = 1 // first row
+        for i in dp.iter_mut() {
+            i[0] = 1 // first row
         }
+
         for i in 0..n as usize {
             dp[0][i] = 1 // first col
         }
