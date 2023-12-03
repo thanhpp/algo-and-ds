@@ -1,4 +1,8 @@
-use std::{fs, io::Read};
+use std::{
+    collections::{HashMap, HashSet},
+    fs,
+    io::Read,
+};
 
 fn main() {
     let mut buffer = String::new();
@@ -6,13 +10,112 @@ fn main() {
         .unwrap()
         .read_to_string(&mut buffer)
         .unwrap();
-    let chars_map = parse_chars_map(&buffer);
+    let mut chars_map = parse_chars_map(&buffer);
 
     // println!("chars_map: {:#?}", chars_map);
 
     let numbers = form_numbers_map(&chars_map);
 
-    println!("{}", sum_missing_part(&chars_map, &numbers));
+    println!(
+        "sum_missing_part: {}",
+        sum_missing_part(&chars_map, &numbers)
+    );
+
+    println!(
+        "sum_gear_ratio: {}",
+        sum_gear_ratio(&mut chars_map, &numbers)
+    );
+}
+
+fn sum_gear_ratio(chars_map: &mut Vec<Vec<char>>, numbers: &[Number]) -> usize {
+    let mut sum = 0;
+    // position -> value
+    let mut pos_to_number_idx: HashMap<(usize, usize), usize> = HashMap::new();
+    for (idx, n) in numbers.iter().enumerate() {
+        for c in n.index.0..=n.index.1 {
+            pos_to_number_idx.insert((n.line, c), idx);
+            // println!("pos_to_number: {} {} -> {}", n.line, c, n.value);
+        }
+    }
+
+    let (line_bound, c_bound) = (chars_map.len(), chars_map[0].len());
+
+    for (l, line) in chars_map.iter().enumerate() {
+        for (c, symbol) in line.iter().enumerate() {
+            let mut tmp = 1;
+            let mut set_idx: HashSet<usize> = HashSet::new();
+            if symbol.ne(&'*') {
+                continue;
+            }
+            let pos = pos_around(l, c, line_bound, c_bound);
+            // println!("l: {}, c: {}, pos: {:#?}", l, c, pos);
+            for p in pos.iter() {
+                match pos_to_number_idx.get(p) {
+                    None => {
+                        continue;
+                    }
+                    Some(idx) => {
+                        if set_idx.contains(idx) {
+                            continue;
+                        }
+
+                        set_idx.insert(*idx);
+                        tmp *= numbers[*idx].value;
+                    }
+                }
+            }
+            // println!(
+            //     "l: {}; c: {}, sets: {}, pos: {:#?}",
+            //     l,
+            //     c,
+            //     set_idx.len(),
+            //     pos
+            // );
+            if set_idx.len() == 2 {
+                sum += tmp;
+            }
+        }
+    }
+
+    sum
+}
+
+fn pos_around(line: usize, c: usize, line_bound: usize, c_bound: usize) -> Vec<(usize, usize)> {
+    let mut v = Vec::new();
+    // up
+    if line > 0 {
+        v.push((line - 1, c));
+        // top left
+        if c > 0 {
+            v.push((line - 1, c - 1))
+        }
+        // top right
+        if c < c_bound - 1 {
+            v.push((line - 1, c + 1))
+        }
+    }
+    // down
+    if line < line_bound - 1 {
+        v.push((line + 1, c));
+        // bottom left
+        if c > 0 {
+            v.push((line + 1, c - 1))
+        }
+        // bottom right
+        if c < c_bound - 1 {
+            v.push((line + 1, c + 1))
+        }
+    }
+    // left
+    if c > 0 {
+        v.push((line, c - 1))
+    }
+    // right
+    if c < c_bound - 1 {
+        v.push((line, c + 1))
+    }
+
+    v
 }
 
 fn sum_missing_part(chars_map: &Vec<Vec<char>>, numbers: &Vec<Number>) -> usize {
@@ -87,7 +190,7 @@ struct Number {
     index: (usize, usize),
 }
 
-fn form_numbers_map(input: &Vec<Vec<char>>) -> Vec<Number> {
+fn form_numbers_map(input: &[Vec<char>]) -> Vec<Number> {
     let mut numbers = Vec::new();
 
     for (i, v) in input.iter().enumerate() {
