@@ -10,6 +10,37 @@ fn main() {
     let cards = parse_cards(&buffer);
 
     println!("sum_winning_points: {}", sum_winning_points(&cards));
+
+    println!("sum_cards: {}", sum_cards(&cards));
+}
+
+fn sum_cards(cards: &[Card]) -> isize {
+    let mut card_instances = vec![1; cards.len() + 1];
+    card_instances[0] = 0;
+
+    for c in cards {
+        let mut win_count = 0;
+        for n in c.card_numbers.iter() {
+            if c.win_numbers.contains(n) {
+                win_count += 1;
+            }
+        }
+        // println!("card {}: {}", c.id, win_count);
+        if win_count == 0 {
+            continue;
+        }
+
+        let instances = card_instances[c.id as usize];
+        for i in 1..=win_count {
+            if i >= card_instances.len() {
+                break;
+            }
+
+            card_instances[c.id as usize + i] += instances
+        }
+    }
+
+    card_instances.iter().sum()
 }
 
 fn sum_winning_points(cards: &[Card]) -> isize {
@@ -22,7 +53,7 @@ fn sum_winning_points(cards: &[Card]) -> isize {
                 win_count += 1;
             }
         }
-        println!("card {}: {}", c.id, win_count);
+        // println!("card {}: {}", c.id, win_count);
         if win_count == 0 {
             continue;
         }
