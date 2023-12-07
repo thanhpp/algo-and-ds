@@ -10,8 +10,8 @@ fn main() {
     println!("part_2: {:#?}", part_2(&hands));
 }
 
-fn part_1(hands: &Vec<Hand>) -> usize {
-    let mut hands = hands.clone();
+fn part_1(hands: &[Hand]) -> usize {
+    let mut hands = hands.clone().to_vec();
     hands.sort_by(|a, b| {
         match a
             .type_of_hand(false)
@@ -43,8 +43,8 @@ fn part_1(hands: &Vec<Hand>) -> usize {
     total_winning
 }
 
-fn part_2(hands: &Vec<Hand>) -> usize {
-    let mut hands = hands.clone();
+fn part_2(hands: &[Hand]) -> usize {
+    let mut hands = hands.clone().to_vec();
     hands.sort_by(|a, b| {
         match a
             .type_of_hand(true)
