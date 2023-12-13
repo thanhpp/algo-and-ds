@@ -1,5 +1,7 @@
 package gosol
 
+// COMPLEXITY: 2^n (each num -> + or -)
+
 func findTargetSumWaysDFS(nums []int, target int) int {
 	var count = 0
 	dfs(nums, 0, 1, target, &count)
