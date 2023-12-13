@@ -1,9 +1,11 @@
 use std::{collections::HashMap, fs, io::Read};
 
+use itertools::Itertools;
+
 mod part_2;
 
 fn main() {
-    const INPUT: &str = "test_1.txt";
+    const INPUT: &str = "input.txt";
     let rows = parse_input(INPUT);
 
     // println!("{:#?}", parse_input(INPUT));
@@ -13,7 +15,7 @@ fn main() {
     // part 2
     let mut sum = 0;
     for r in rows {
-        sum += part_2::solve(&r.pos.iter().collect::<String>(), r.arrangement.into_iter())
+        sum += part_2::my_solve(&r.pos, &r.arrangement)
     }
     println!("sum {}", sum);
 }
@@ -107,7 +109,7 @@ fn p1_dfs(
             return count + 1;
         };
 
-        println!("{:?} | {:?}", pos, current_arrangement);
+        // println!("{:?} | {:?}", pos, current_arrangement);
 
         return count;
     }
@@ -139,6 +141,8 @@ fn p1_dfs(
 }
 
 fn parse_input(file: &str) -> Vec<Row> {
+    const FACTOR: usize = 5;
+
     let mut buffer = String::new();
     fs::File::open(file)
         .unwrap()
@@ -150,16 +154,26 @@ fn parse_input(file: &str) -> Vec<Row> {
     let mut rows: Vec<Row> = Vec::new();
     for l in lines {
         let data: Vec<&str> = l.split(' ').collect();
-        let (f1, f2) = (data[0].len(), data[1].len());
-        rows.push(Row {
-            pos: data[0].chars().cycle().take(5 * f1).collect(),
-            arrangement: data[1]
+        let (pos, arrangement) = (
+            std::iter::once(data[0]),
+            data[1]
                 .split(',')
                 .map(|c| c.parse().unwrap())
+                .collect::<Vec<usize>>(),
+        );
+        let r = Row {
+            pos: pos.cycle().take(FACTOR).join("?").chars().collect_vec(),
+            arrangement: arrangement
+                .iter()
                 .cycle()
-                .take(5 * f2)
-                .collect(),
-        })
+                .take(FACTOR * arrangement.len())
+                .cloned()
+                .collect_vec(),
+        };
+
+        println!("{:?}\n{:?}", r.pos, r.arrangement);
+
+        rows.push(r)
     }
 
     rows
