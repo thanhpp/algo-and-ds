@@ -1,12 +1,21 @@
-use std::{fs, io::Read};
+use std::{collections::HashMap, fs, io::Read};
+
+mod part_2;
 
 fn main() {
-    const INPUT: &str = "input.txt";
+    const INPUT: &str = "test_1.txt";
     let rows = parse_input(INPUT);
 
     // println!("{:#?}", parse_input(INPUT));
 
-    println!("part 1: {}", part_1(&rows));
+    // println!("part 1: {}", part_1(&rows));
+
+    // part 2
+    let mut sum = 0;
+    for r in rows {
+        sum += part_2::solve(&r.pos.iter().collect::<String>(), r.arrangement.into_iter())
+    }
+    println!("sum {}", sum);
 }
 
 #[derive(Debug)]
@@ -33,20 +42,50 @@ fn p1_possible_arrangement(pos: &Vec<char>, arrangement: &Vec<usize>) -> usize {
             _ => continue,
         }
     }
+    let mut m = HashMap::new();
+    let mut id = 0;
+    for i in id..pos.len() {
+        if pos[i] == '?' {
+            id = i;
+            break;
+        };
+    }
+    let res = p1_dfs(
+        &mut pos.clone(),
+        id,
+        '#',
+        arrangement,
+        possible_place,
+        0,
+        &mut m,
+    ) + p1_dfs(
+        &mut pos.clone(),
+        id,
+        '.',
+        arrangement,
+        possible_place,
+        0,
+        &mut m,
+    );
 
-    let mut count = 0;
-    p1_dfs(&mut pos.clone(), 0, arrangement, possible_place, &mut count);
-
-    count
+    res
 }
 
 fn p1_dfs(
     pos: &mut Vec<char>,
-    next_idx: usize,
+    idx: usize,
+    use_char: char,
     arrangement: &Vec<usize>,
-    possible_place: usize,
-    count: &mut usize,
-) {
+    mut possible_place: usize,
+    count: usize,
+    cache: &mut HashMap<(usize, char), usize>,
+) -> usize {
+    if idx >= pos.len() {
+        return count;
+    }
+    pos[idx] = use_char;
+    possible_place -= 1;
+
     if possible_place == 0 {
         let mut current_arrangement = Vec::<usize>::new();
         let mut continuous_count = 0;
@@ -65,36 +104,38 @@ fn p1_dfs(
         }
 
         if current_arrangement.eq(arrangement) {
-            *count += 1;
+            return count + 1;
         };
 
-        // println!("{:?}", pos);
-        // println!("{:?}", current_arrangement);
+        println!("{:?} | {:?}", pos, current_arrangement);
 
-        return;
+        return count;
     }
-    if next_idx >= pos.len() {
-        return;
+
+    if let Some(cached) = cache.get(&(idx, use_char)) {
+        return count + cached;
     }
 
     // find next possible place
-    let mut idx = 0;
-    for i in next_idx..pos.len() {
+    let mut id = idx + 1;
+    for i in id..pos.len() {
         if pos[i] == '?' {
-            idx = i;
+            id = i;
             break;
         };
     }
 
     // replace with #
-    pos[idx] = '#';
-    p1_dfs(pos, idx + 1, arrangement, possible_place - 1, count);
-
+    let v1 = p1_dfs(pos, id, '#', arrangement, possible_place, count, cache);
     // replace with .
-    pos[idx] = '.';
-    p1_dfs(pos, idx + 1, arrangement, possible_place - 1, count);
+    let v2 = p1_dfs(pos, id, '.', arrangement, possible_place, count, cache);
 
-    pos[idx] = '?';
+    println!("idx: {} | {:?}", idx, cache);
+    cache.insert((id, use_char), v1 + v2);
+
+    pos[id] = '?';
+
+    v1 + v2
 }
 
 fn parse_input(file: &str) -> Vec<Row> {
@@ -109,9 +150,15 @@ fn parse_input(file: &str) -> Vec<Row> {
     let mut rows: Vec<Row> = Vec::new();
     for l in lines {
         let data: Vec<&str> = l.split(' ').collect();
+        let (f1, f2) = (data[0].len(), data[1].len());
         rows.push(Row {
-            pos: data[0].chars().collect(),
-            arrangement: data[1].split(',').map(|c| c.parse().unwrap()).collect(),
+            pos: data[0].chars().cycle().take(5 * f1).collect(),
+            arrangement: data[1]
+                .split(',')
+                .map(|c| c.parse().unwrap())
+                .cycle()
+                .take(5 * f2)
+                .collect(),
         })
     }
 
