@@ -1,0 +1,27 @@
+can't move down, current 2, under cube 1, positions: [Point { x: 0, y: 0, z: 2 }, Point { x: 1, y: 0, z: 2 }, Point { x: 2, y: 0, z: 2 }]
+can't move down, current 3, under cube 1, positions: [Point { x: 0, y: 2, z: 2 }, Point { x: 1, y: 2, z: 2 }, Point { x: 2, y: 2, z: 2 }]
+can't move down, current 4, under cube 2, positions: [Point { x: 0, y: 0, z: 3 }, Point { x: 0, y: 1, z: 3 }, Point { x: 0, y: 2, z: 3 }]
+can't move down, current 5, under cube 2, positions: [Point { x: 2, y: 0, z: 3 }, Point { x: 2, y: 1, z: 3 }, Point { x: 2, y: 2, z: 3 }]
+can't move down, current 6, under cube 4, positions: [Point { x: 0, y: 1, z: 4 }, Point { x: 1, y: 1, z: 4 }, Point { x: 2, y: 1, z: 4 }]
+can't move down, current 7, under cube 6, positions: [Point { x: 1, y: 1, z: 5 }, Point { x: 1, y: 1, z: 6 }]
+can't move down, current 2, under cube 1, positions: [Point { x: 0, y: 0, z: 2 }, Point { x: 1, y: 0, z: 2 }, Point { x: 2, y: 0, z: 2 }]
+can't move down, current 3, under cube 1, positions: [Point { x: 0, y: 2, z: 2 }, Point { x: 1, y: 2, z: 2 }, Point { x: 2, y: 2, z: 2 }]
+can't move down, current 4, under cube 2, positions: [Point { x: 0, y: 0, z: 3 }, Point { x: 0, y: 1, z: 3 }, Point { x: 0, y: 2, z: 3 }]
+can't move down, current 5, under cube 2, positions: [Point { x: 2, y: 0, z: 3 }, Point { x: 2, y: 1, z: 3 }, Point { x: 2, y: 2, z: 3 }]
+can't move down, current 6, under cube 4, positions: [Point { x: 0, y: 1, z: 4 }, Point { x: 1, y: 1, z: 4 }, Point { x: 2, y: 1, z: 4 }]
+can't move down, current 7, under cube 6, positions: [Point { x: 1, y: 1, z: 5 }, Point { x: 1, y: 1, z: 6 }]
+P1Node { cube: Cube { id: 1, end_1: Point { x: 1, y: 0, z: 1 }, end_2: Point { x: 1, y: 2, z: 1 } }, parents_ids: {}, children_ids: {3, 2} }
+P1Node { cube: Cube { id: 4, end_1: Point { x: 0, y: 0, z: 3 }, end_2: Point { x: 0, y: 2, z: 3 } }, parents_ids: {2, 3}, children_ids: {6} }
+P1Node { cube: Cube { id: 5, end_1: Point { x: 2, y: 0, z: 3 }, end_2: Point { x: 2, y: 2, z: 3 } }, parents_ids: {2, 3}, children_ids: {6} }
+P1Node { cube: Cube { id: 6, end_1: Point { x: 0, y: 1, z: 4 }, end_2: Point { x: 2, y: 1, z: 4 } }, parents_ids: {4, 5}, children_ids: {7} }
+P1Node { cube: Cube { id: 2, end_1: Point { x: 0, y: 0, z: 2 }, end_2: Point { x: 2, y: 0, z: 2 } }, parents_ids: {1}, children_ids: {4, 5} }
+P1Node { cube: Cube { id: 7, end_1: Point { x: 1, y: 1, z: 5 }, end_2: Point { x: 1, y: 1, z: 6 } }, parents_ids: {6}, children_ids: {} }
+P1Node { cube: Cube { id: 3, end_1: Point { x: 0, y: 2, z: 2 }, end_2: Point { x: 2, y: 2, z: 2 } }, parents_ids: {1}, children_ids: {4, 5} }
+can not disintegrated P1Node { cube: Cube { id: 1, end_1: Point { x: 1, y: 0, z: 1 }, end_2: Point { x: 1, y: 2, z: 1 } }, parents_ids: {}, children_ids: {3, 2} }, because of P1Node { cube: Cube { id: 3, end_1: Point { x: 0, y: 2, z: 2 }, end_2: Point { x: 2, y: 2, z: 2 } }, parents_ids: {1}, children_ids: {4, 5} }
+can_disintegrated P1Node { cube: Cube { id: 4, end_1: Point { x: 0, y: 0, z: 3 }, end_2: Point { x: 0, y: 2, z: 3 } }, parents_ids: {2, 3}, children_ids: {6} }
+can_disintegrated P1Node { cube: Cube { id: 5, end_1: Point { x: 2, y: 0, z: 3 }, end_2: Point { x: 2, y: 2, z: 3 } }, parents_ids: {2, 3}, children_ids: {6} }
+can not disintegrated P1Node { cube: Cube { id: 6, end_1: Point { x: 0, y: 1, z: 4 }, end_2: Point { x: 2, y: 1, z: 4 } }, parents_ids: {4, 5}, children_ids: {7} }, because of P1Node { cube: Cube { id: 7, end_1: Point { x: 1, y: 1, z: 5 }, end_2: Point { x: 1, y: 1, z: 6 } }, parents_ids: {6}, children_ids: {} }
+can_disintegrated P1Node { cube: Cube { id: 2, end_1: Point { x: 0, y: 0, z: 2 }, end_2: Point { x: 2, y: 0, z: 2 } }, parents_ids: {1}, children_ids: {4, 5} }
+can_disintegrated P1Node { cube: Cube { id: 7, end_1: Point { x: 1, y: 1, z: 5 }, end_2: Point { x: 1, y: 1, z: 6 } }, parents_ids: {6}, children_ids: {} }
+can_disintegrated P1Node { cube: Cube { id: 3, end_1: Point { x: 0, y: 2, z: 2 }, end_2: Point { x: 2, y: 2, z: 2 } }, parents_ids: {1}, children_ids: {4, 5} }
+p1 5
