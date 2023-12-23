@@ -40,8 +40,7 @@ fn p2_solve(map: &Map) {
         w_map: &mut AdjWeightedMap,
         visited: &mut HashSet<(usize, usize)>,
         start_intersection: (usize, usize),
-        r: usize,
-        c: usize,
+        (r, c): (usize, usize),
         distance: usize,
     ) {
         println!("dfs_intersection_distance {} {}", r, c);
@@ -74,8 +73,7 @@ fn p2_solve(map: &Map) {
                 w_map,
                 visited,
                 start_intersection,
-                nr,
-                nc,
+                (nr, nc),
                 distance + 1,
             );
             visited.remove(&(nr, nc));
@@ -97,8 +95,7 @@ fn p2_solve(map: &Map) {
             &mut weighted_map,
             &mut HashSet::new(),
             *it_sec,
-            it_sec.0,
-            it_sec.1,
+            *it_sec,
             0,
         );
     }
