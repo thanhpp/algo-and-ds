@@ -3,7 +3,7 @@ use std::{fs, io::Read};
 mod p2_solve;
 
 fn main() {
-    const INPUT: &str = "test_1.txt";
+    const INPUT: &str = "input.txt";
     const MIN_BOUND: f64 = 200000000000000.0;
     const MAX_BOUND: f64 = 400000000000000.0;
 
@@ -15,7 +15,7 @@ fn main() {
     // p1_solve(&stones, MIN_BOUND, MAX_BOUND);
 
     // p2_solve(&stones)
-    p2_solve::p2_solve(&p2_solve::p2_parse_input(INPUT))
+    p2_solve::p2_solve_z3(&p2_solve::p2_parse_input(INPUT))
 }
 
 fn get_time(stone: &HailStone, pos_x: f64, pos_y: f64) -> Option<f64> {

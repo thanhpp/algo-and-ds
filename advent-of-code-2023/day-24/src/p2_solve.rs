@@ -1,6 +1,7 @@
 use std::{collections::HashSet, fs, io::Read};
 
 use num_bigfloat::{BigFloat, ZERO};
+use z3::ast::Ast;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct HailStone {
@@ -13,8 +14,39 @@ pub struct HailStone {
 }
 
 // z3
-pub fn p2_solve(stones: &[HailStone]) {
-    
+pub fn p2_solve_z3(stones: &[HailStone]) {
+    let cfg = z3::Config::new();
+    let context = z3::Context::new(&cfg);
+    let solver = z3::Solver::new(&context);
+
+    let x = z3::ast::Int::new_const(&context, "x");
+    let y = z3::ast::Int::new_const(&context, "y");
+    let z = z3::ast::Int::new_const(&context, "z");
+    let vx = z3::ast::Int::new_const(&context, "vx");
+    let vy = z3::ast::Int::new_const(&context, "vy");
+    let vz = z3::ast::Int::new_const(&context, "vz");
+
+    for (i, hs) in stones.iter().take(3).enumerate() {
+        let a = z3::ast::Int::from_i64(&context, hs.px.to_i64().unwrap());
+        let va = z3::ast::Int::from_i64(&context, hs.vx.to_i64().unwrap());
+        let b = z3::ast::Int::from_i64(&context, hs.py.to_i64().unwrap());
+        let vb = z3::ast::Int::from_i64(&context, hs.vy.to_i64().unwrap());
+        let c = z3::ast::Int::from_i64(&context, hs.pz.to_i64().unwrap());
+        let vc = z3::ast::Int::from_i64(&context, hs.vz.to_i64().unwrap());
+
+        let t = z3::ast::Int::new_const(&context, format!("t{i}"));
+        solver.assert(&t.gt(&z3::ast::Int::from_i64(&context, 0)));
+        solver.assert(&(x.clone() + vx.clone() * t.clone())._eq(&(a + va * t.clone())));
+        solver.assert(&(y.clone() + vy.clone() * t.clone())._eq(&(b + vb * t.clone())));
+        solver.assert(&(z.clone() + vz.clone() * t.clone())._eq(&(c + vc * t.clone())));
+    }
+    if solver.check() == z3::SatResult::Sat {
+        let Some(m) = solver.get_model() else {
+            println!("Failed to solve!");
+            return;
+        };
+        println!("{}", m.eval(&(x + y + z), true).unwrap());
+    }
 }
 
 // https://www.reddit.com/r/adventofcode/comments/18pnycy/comment/keq7g67
