@@ -1,0 +1,205 @@
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    fs,
+    io::Read,
+};
+
+use graphviz_rust::{
+    cmd::{CommandArg, Format},
+    dot_generator::*,
+    dot_structures::*,
+    exec,
+    printer::PrinterContext,
+};
+
+fn main() {
+    const INPUT: &str = "input.txt";
+    let adj_list = p1_parse_input(INPUT);
+    for (k, v) in adj_list.iter() {
+        println!("{}: {:?}", k, v)
+    }
+    graphviz(&adj_list, &format!("{}{}", INPUT, "p1_adj_list.png"));
+
+    println!();
+    let enriched = p1_enrich(&adj_list);
+    for (k, v) in enriched.iter() {
+        println!("{}: {:?}", k, v)
+    }
+
+    let mut edges = Vec::<(String, String)>::new();
+    for k in enriched.keys() {
+        let dests = enriched.get(k).unwrap();
+        // euler cycle
+        if dests.len() % 2 == 0 {
+            continue;
+        }
+
+        for d in dests {
+            if edges.contains(&(d.clone(), k.clone())) {
+                continue;
+            }
+            edges.push((k.clone(), d.clone()))
+        }
+    }
+
+    for e in edges.iter() {
+        println!("{:?}", e)
+    }
+    println!("{}", edges.len());
+
+    let mut count = 0;
+    for e1 in 0..(edges.len() - 2) {
+        for e2 in (e1 + 1)..(edges.len() - 1) {
+            for e3 in (e2 + 1)..(edges.len()) {
+                count += 1;
+                println!("count {count}");
+
+                let mut removing = HashSet::<(String, String)>::new();
+                for (src, dst) in [edges[e1].clone(), edges[e2].clone(), edges[e3].clone()] {
+                    removing.insert((src.clone(), dst.clone()));
+                    removing.insert((dst.clone(), src.clone()));
+                }
+
+                // println!("removing: {:?}", removing);
+
+                let mut disjoint_sets = HashMap::<String, String>::new(); // node -> label
+                for src in enriched.keys() {
+                    let mut label: Option<String> = None;
+                    let mut queue = VecDeque::<String>::new();
+                    let mut visited = HashSet::<String>::new();
+                    let mut visiting = HashSet::<String>::new();
+                    queue.push_front(src.clone());
+                    while let Some(node) = queue.pop_back() {
+                        // println!("visiting {}", node);
+                        if visited.contains(&node) {
+                            continue;
+                        }
+                        visited.insert(node.clone());
+                        visiting.remove(&node);
+
+                        for d in enriched.get(&node).unwrap().iter() {
+                            if removing.contains(&(node.clone(), d.clone())) {
+                                continue;
+                            }
+                            if visited.contains(d) || visiting.contains(d) {
+                                continue;
+                            }
+                            // println!("pushed {} {}", src.clone(), d.clone());
+                            queue.push_front(d.clone());
+                            visiting.insert(d.clone());
+                        }
+
+                        if label.is_some() {
+                            continue;
+                        }
+
+                        if let Some(lb) = disjoint_sets.get(&node) {
+                            label = Some(lb.clone())
+                        }
+                    }
+                    if label.is_none() {
+                        label = Some(src.clone())
+                    }
+                    let label = label.unwrap();
+                    for n in visited {
+                        disjoint_sets.insert(n, label.clone());
+                    }
+                }
+
+                let mut count = HashMap::<String, usize>::new();
+                for (_, label) in disjoint_sets.iter() {
+                    match count.get_mut(label) {
+                        None => {
+                            count.insert(label.clone(), 1);
+                        }
+                        Some(v) => {
+                            *v += 1;
+                        }
+                    }
+                }
+
+                if count.len() < 2 {
+                    continue;
+                }
+
+                println!("{:?}", count);
+                return;
+            }
+        }
+    }
+}
+
+fn p1_enrich(adj_list: &HashMap<String, HashSet<String>>) -> HashMap<String, HashSet<String>> {
+    let mut enriched = adj_list.clone();
+
+    for (src, dests) in adj_list.iter() {
+        for d in dests.iter() {
+            match enriched.get_mut(d) {
+                None => {
+                    enriched.insert(d.clone(), HashSet::from_iter([src.clone()]));
+                }
+                Some(adj) => {
+                    adj.insert(src.clone());
+                }
+            }
+        }
+    }
+
+    enriched
+}
+
+fn p1_parse_input(file: &str) -> HashMap<String, HashSet<String>> {
+    let mut buffer = String::new();
+    fs::File::open(file)
+        .unwrap()
+        .read_to_string(&mut buffer)
+        .unwrap();
+
+    let mut adj_list: HashMap<String, HashSet<String>> = HashMap::new();
+
+    for l in buffer.lines().filter(|l| !l.is_empty()) {
+        let (src, dests) = l.split_once(": ").unwrap();
+        let dests: Vec<String> = dests
+            .trim()
+            .split(' ')
+            .filter(|v| !v.is_empty())
+            .map(|s| s.to_string())
+            .collect();
+
+        match adj_list.get_mut(src) {
+            None => {
+                adj_list.insert(src.to_string(), HashSet::from_iter(dests.iter().cloned()));
+            }
+            Some(adjs) => {
+                for d in dests {
+                    adjs.insert(d);
+                }
+            }
+        };
+    }
+
+    adj_list
+}
+
+fn graphviz(adj_list: &HashMap<String, HashSet<String>>, file: &str) {
+    let mut g = graph!(id!("adj_list"));
+    for (k, v) in adj_list.iter() {
+        g.add_stmt(Stmt::Node(node!(k.clone())));
+        for dst in v.iter() {
+            g.add_stmt(Stmt::Node(node!(dst.clone())));
+
+            g.add_stmt(Stmt::Edge(
+                edge!(node_id!(k.clone()) => node_id!(dst.clone())),
+            ));
+        }
+    }
+
+    // println!("{:?}", g);
+
+    exec(
+        g,
+        &mut PrinterContext::default(),
+        vec![Format::Png.into(), CommandArg::Output(file.to_string())],
+    )
+    .unwrap();
+}
