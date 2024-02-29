@@ -7,7 +7,8 @@ impl Solution {
         // NOTE: unstable sort reduce the run time by 42% (80 -> 56)
         intervals.sort_unstable_by(|a, b| match a[0].cmp(&b[0]) {
             std::cmp::Ordering::Equal => a[1].cmp(&b[1]),
-            _ => a[0].cmp(&b[0]),
+            std::cmp::Ordering::Greater => std::cmp::Ordering::Greater,
+            std::cmp::Ordering::Less => std::cmp::Ordering::Less,
         });
 
         let mut removed = 0;
