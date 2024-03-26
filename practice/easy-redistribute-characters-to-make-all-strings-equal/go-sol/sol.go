@@ -1,11 +1,7 @@
 package gosol
 
-import "sort"
-
 // IDEA: all words equal -> count everything then redistribute
 func makeEqual(words []string) bool {
-	sort.Ints()
-
 	// SPACE: O(sum(len(w in words)))
 	charCount := make(map[rune]int)
 	totalChar := 0
