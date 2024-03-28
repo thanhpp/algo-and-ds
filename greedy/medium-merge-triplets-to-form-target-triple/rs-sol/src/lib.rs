@@ -1,14 +1,23 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+pub struct Solution {}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl Solution {
+    pub fn merge_triplets(triplets: Vec<Vec<i32>>, target: Vec<i32>) -> bool {
+        let (mut found_0, mut found_1, mut found_2) = (false, false, false);
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        for t in triplets {
+            if t[0] > target[0] || t[1] > target[1] || t[2] > target[2] {
+                continue;
+            }
+
+            found_0 |= t[0] == target[0];
+            found_1 |= t[1] == target[1];
+            found_2 |= t[2] == target[2];
+
+            if found_0 && found_1 && found_2 {
+                return true;
+            }
+        }
+
+        false
     }
 }
