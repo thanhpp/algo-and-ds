@@ -8,7 +8,7 @@ func isInterleave(s1 string, s2 string, s3 string) bool {
 
 	// dp[i1][i2] = is it possible to use i1..len(s1) & i2..len(s2) to form i1+i2..len(s3)
 	// dp[len(s1)][x] <=> s1 == "" (used all s1 - out of bound) ~~ same for s2
-	var dp = make([][]bool, len(s1))
+	var dp = make([][]bool, len(s1)+1)
 	for i := range dp {
 		dp[i] = make([]bool, len(s2)+1)
 	}
