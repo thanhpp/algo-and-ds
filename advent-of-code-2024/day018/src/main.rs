@@ -21,6 +21,7 @@ fn main() {
     while let Some(()) = solve1(&data, CAP, sim_count) {
         sim_count += 1;
     }
+    sim_count -= 1;
     println!("{}", sim_count);
     println!("{:?}", data[sim_count as usize]);
 }
