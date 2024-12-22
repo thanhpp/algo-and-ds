@@ -5,10 +5,15 @@ use std::{
     io::Read,
 };
 
+mod solve2;
+
 fn main() {
     let prob = Problem::from_file("test_1.txt");
     // println!("problem: {:?}", prob);
     solve1(&prob);
+
+    let data = include_str!("../input_1.txt");
+    solve2::solve2(data);
 }
 
 #[derive(Debug, Clone)]
