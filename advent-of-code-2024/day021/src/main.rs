@@ -1,16 +1,20 @@
 use std::{
     cmp::Reverse,
-    collections::BinaryHeap,
+    collections::{BinaryHeap, HashMap},
     fmt::{Debug, Write},
     fs, i64,
     io::Read,
 };
 
+use itertools::Itertools;
+
 fn main() {
     let data = read("input_1.txt");
     println!("data: {:?}", data);
 
-    solve1(&data);
+    // solve1(&data);
+
+    solve2(&data);
 }
 
 fn read(p: &str) -> Vec<Vec<char>> {
@@ -202,7 +206,12 @@ fn all_shortest_path(map: &[&[char]], sequence: &[char]) -> Vec<Vec<Action>> {
 }
 
 fn filter_shortest(actions: Vec<Vec<Action>>) -> Vec<Vec<Action>> {
-    let min_step = actions.iter().map(|s| s.len()).min().unwrap();
+    let min_step = match actions.iter().map(|s| s.len()).min() {
+        None => {
+            return vec![];
+        }
+        Some(v) => v,
+    };
 
     actions
         .iter()
@@ -249,3 +258,73 @@ fn solve1(data: &[Vec<char>]) {
 
     println!("solve1 {}", solve1)
 }
+
+fn find_shortest_sequence(
+    map: &[&[char]],
+    map_id: usize,
+    sequence: &[char],
+    depth: usize,
+    memo: &mut HashMap<(String, usize, usize), usize>,
+) -> usize {
+    let sequence_string = String::from_iter(sequence);
+    // println!("finding: {} / {} / {}", sequence_string, map_id, depth);
+    if let Some(&cost) = memo.get(&(sequence_string.clone(), depth, map_id)) {
+        return cost;
+    }
+
+    let mut search = vec!['A'];
+    search.extend_from_slice(sequence);
+
+    let v = search
+        .iter()
+        .tuple_windows()
+        .map(|(&from, &to)| {
+            let shortest_paths = filter_shortest(travel_map(map, from, to));
+            // println!(
+            //     "from, to: {}, {} - {}, paths: {:?}",
+            //     from, to, depth, shortest_paths
+            // );
+            match depth {
+                0 => shortest_paths[0].len() + 1, // one more push
+                _ => shortest_paths
+                    .iter()
+                    .cloned()
+                    .map(|mut path| {
+                        path.push(Action::Push);
+                        find_shortest_sequence(
+                            MAP2,
+                            2,
+                            &path.iter().map(|a| a.to_char()).collect::<Vec<char>>(),
+                            depth - 1,
+                            memo,
+                        )
+                    })
+                    .min()
+                    .unwrap(),
+            }
+        })
+        .sum::<usize>();
+    memo.insert((sequence_string, depth, map_id), v);
+
+    v
+}
+
+fn solve2(data: &[Vec<char>]) {
+    let mut memo = HashMap::new();
+    let res = data
+        .iter()
+        .map(|seq| {
+            let v = find_shortest_sequence(MAP1, 1, seq, 25, &mut memo);
+            println!("{:?}, {}", seq, v);
+
+            v * String::from_iter(seq)
+                .trim_end_matches('A')
+                .parse::<usize>()
+                .unwrap()
+        })
+        .sum::<usize>();
+
+    println!("solve2: {}", res)
+}
+
+// Thanks to https://gist.github.com/icub3d/04d3e751f327816bd97a097a5f4f0970 for memorization
