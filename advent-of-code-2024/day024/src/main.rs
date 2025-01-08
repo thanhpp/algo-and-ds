@@ -1,3 +1,5 @@
+mod part2;
+
 use std::collections::HashMap;
 
 use graphviz_rust::{
@@ -7,12 +9,14 @@ use graphviz_rust::{
 
 fn main() {
     let data = include_str!("../input_1.txt");
-    let prob = Problem::new(data);
+    // let prob = Problem::new(data);
 
     // println!("{:#?}", prob);
 
     // solve1(&prob);
-    draw_graphviz(&prob);
+    // draw_graphviz(&prob);
+    part2::solve_part2(data);
+    part2::part_2_solution(data);
 }
 
 #[derive(Debug, Clone)]
